@@ -1,12 +1,14 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const JWT_SECRET = process.env.JWT_SECRET || 'restaurant_default_secret_key_2026';
+
 const protect = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith('Bearer ')) {
     return res.status(401).json({ message: 'Not authorized, no token provided' });
   }
   try {
-    const { id } = jwt.verify(authHeader.split(' ')[1], process.env.JWT_SECRET);
+    const { id } = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
     req.user = await User.findById(id).select('-password');
     if (!req.user) return res.status(401).json({ message: 'User not found' });
     return next();

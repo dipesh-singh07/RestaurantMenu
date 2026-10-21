@@ -1,6 +1,8 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 const express = require('express');
 const cors = require('cors');
+const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 
 const app = express();
@@ -13,24 +15,30 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/menu', require('./routes/menuRoutes'));
 
+// Health check endpoint for Render
 app.get('/', (req, res) => {
-  res.send('Restaurant API is running...');
+  res.status(200).json({
+    status: 'ok',
+    message: 'Restaurant API is running...',
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'connecting/disconnected'
+  });
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    uptime: process.uptime(),
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'connecting/disconnected'
+  });
 });
 
 const PORT = process.env.PORT || 5001;
 
-async function startServer() {
-  try {
-    if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
-      throw new Error('JWT_SECRET must be configured in production');
-    }
+// Bind to 0.0.0.0 for Render compatibility
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
-    await connectDB();
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  } catch (error) {
-    console.error(`Failed to start server: ${error.message}`);
-    process.exit(1);
-  }
-}
+// Connect to MongoDB
+connectDB();
 
-startServer();
