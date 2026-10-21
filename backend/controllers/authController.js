@@ -8,8 +8,6 @@ const generateToken = (id) => {
   });
 };
 
-// @desc    Register a new user
-// @route   POST /api/auth/register
 const registerUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -32,21 +30,11 @@ const registerUser = async (req, res) => {
       password: hashedPassword,
       role: role === 'admin' ? 'admin' : 'customer',
     });
-
-    res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      token: generateToken(user._id),
-    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// @desc    Authenticate user & get token
-// @route   POST /api/auth/login
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -60,21 +48,11 @@ const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
-
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      token: generateToken(user._id),
-    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// @desc    Get current logged in user
-// @route   GET /api/auth/me
 const getMe = async (req, res) => {
   res.json(req.user);
 };

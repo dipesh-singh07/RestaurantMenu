@@ -1,6 +1,4 @@
-import React from 'react';
-
-function MenuCard({ item, onAddToCart }) {
+function MenuCard({ item }) {
   return (
     <div className="menu-card">
       <div>
@@ -15,13 +13,9 @@ function MenuCard({ item, onAddToCart }) {
         <p className="card-price">₹{item.price}</p>
       </div>
 
-      <button
-        onClick={() => onAddToCart(item)}
-        disabled={!item.isAvailable}
-        className="btn-primary"
-      >
-        {item.isAvailable ? 'Add to Cart' : 'Out of Stock'}
-      </button>
+      <p style={{ color: item.isAvailable ? '#2e7d32' : '#c62828', fontSize: '14px' }}>
+        {item.isAvailable ? 'Available' : 'Out of Stock'}
+      </p>
     </div>
   );
 }

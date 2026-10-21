@@ -1,18 +1,14 @@
 const MenuItem = require('../models/MenuItem');
 
-// @desc    Get all menu items
-// @route   GET /api/menu
 const getMenuItems = async (req, res) => {
   try {
-    const items = await MenuItem.find().sort({ category: 1, name: 1 });
+    const items = await MenuItem.find();
     res.json(items);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// @desc    Add a new menu item
-// @route   POST /api/menu
 const addMenuItem = async (req, res) => {
   try {
     const { name, category, price, isVeg, isAvailable } = req.body;
@@ -23,20 +19,17 @@ const addMenuItem = async (req, res) => {
 
     const item = await MenuItem.create({
       name,
-      category: category || 'Main Course',
+      category: category||'Main Course',
       price: Number(price),
-      isVeg: isVeg !== undefined ? isVeg : true,
-      isAvailable: isAvailable !== undefined ? isAvailable : true,
+      isVeg: isVeg!==undefined?isVeg:true,
+      isAvailable: isAvailable!==undefined?isAvailable:true,
     });
-
     res.status(201).json(item);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// @desc    Update a menu item
-// @route   PUT /api/menu/:id
 const updateMenuItem = async (req, res) => {
   try {
     const item = await MenuItem.findById(req.params.id);
@@ -58,15 +51,12 @@ const updateMenuItem = async (req, res) => {
   }
 };
 
-// @desc    Delete a menu item
-// @route   DELETE /api/menu/:id
 const deleteMenuItem = async (req, res) => {
   try {
     const item = await MenuItem.findById(req.params.id);
     if (!item) {
       return res.status(404).json({ message: 'Menu item not found' });
     }
-
     await MenuItem.findByIdAndDelete(req.params.id);
     res.json({ message: 'Menu item removed successfully' });
   } catch (error) {

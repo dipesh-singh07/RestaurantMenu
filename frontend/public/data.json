@@ -1,0 +1,82 @@
+[
+  {
+    "_id": "food-001",
+    "name": "Crispy Lotus Stem",
+    "category": "Starters",
+    "price": 210,
+    "isVeg": true,
+    "isAvailable": true
+  },
+  {
+    "_id": "food-002",
+    "name": "Pepper Garlic Prawns",
+    "category": "Starters",
+    "price": 335,
+    "isVeg": false,
+    "isAvailable": true
+  },
+  {
+    "_id": "food-003",
+    "name": "Roasted Pumpkin Soup",
+    "category": "Starters",
+    "price": 160,
+    "isVeg": true,
+    "isAvailable": true
+  },
+  {
+    "_id": "food-004",
+    "name": "Saffron Cashew Pulao",
+    "category": "Main Course",
+    "price": 295,
+    "isVeg": true,
+    "isAvailable": true
+  },
+  {
+    "_id": "food-005",
+    "name": "Slow-Cooked Lamb Rogan Josh",
+    "category": "Main Course",
+    "price": 425,
+    "isVeg": false,
+    "isAvailable": true
+  },
+  {
+    "_id": "food-006",
+    "name": "Mushroom Pepper Masala",
+    "category": "Main Course",
+    "price": 310,
+    "isVeg": true,
+    "isAvailable": true
+  },
+  {
+    "_id": "food-007",
+    "name": "Caramelized Banana Tart",
+    "category": "Desserts",
+    "price": 185,
+    "isVeg": true,
+    "isAvailable": true
+  },
+  {
+    "_id": "food-008",
+    "name": "Rose Pistachio Panna Cotta",
+    "category": "Desserts",
+    "price": 195,
+    "isVeg": true,
+    "isAvailable": true
+  },
+  {
+    "_id": "food-009",
+    "name": "Pomegranate Mint Cooler",
+    "category": "Beverages",
+    "price": 115,
+    "isVeg": true,
+    "isAvailable": true
+  },
+  {
+    "_id": "food-010",
+    "name": "Iced Cardamom Latte",
+    "category": "Beverages",
+    "price": 145,
+    "isVeg": true,
+    "isAvailable": true
+  }
+]

@@ -15,8 +15,6 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/menu', require('./routes/menuRoutes'));
-app.use('/api/tables', require('./routes/tableRoutes'));
-app.use('/api/orders', require('./routes/orderRoutes'));
 
 app.get('/', (req, res) => {
   res.send('Restaurant API is running...');

@@ -1,135 +1,117 @@
-import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
-
-// Components & Pages
+import { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
-import ProtectedRoute from './components/ProtectedRoute';
-import MenuPage from './pages/MenuPage';
-import CartPage from './pages/CartPage';
-import OrdersPage from './pages/OrdersPage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import AdminDashboard from './pages/AdminDashboard';
+import MenuCard from './components/MenuCard';
+
+const categories = ['All', 'Starters', 'Main Course', 'Desserts', 'Beverages'];
 
 function App() {
-  const navigate = useNavigate();
-
-  // 1. Cart State (Persisted in localStorage)
-  const [cart, setCart] = useState(() => {
-    try {
-      const savedCart = localStorage.getItem('cart');
-      return savedCart ? JSON.parse(savedCart) : [];
-    } catch (e) {
-      return [];
-    }
-  });
-
-  useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
-  }, [cart]);
-
-  // 2. Auth State (Persisted in localStorage)
   const [user, setUser] = useState(() => {
     try {
-      const savedUser = localStorage.getItem('user');
-      return savedUser ? JSON.parse(savedUser) : null;
-    } catch (e) {
+      return JSON.parse(localStorage.getItem('user'));
+    } catch {
       return null;
     }
   });
+  const [menuItems, setMenuItems] = useState([]);
+  const [category, setCategory] = useState('All');
+  const [vegetarianOnly, setVegetarianOnly] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [reloadCount, setReloadCount] = useState(0);
 
-  // Cart Handlers
-  const addToCart = (item) => {
-    setCart((prevCart) => {
-      const existing = prevCart.find((ci) => ci._id === item._id);
-      if (existing) {
-        return prevCart.map((ci) =>
-          ci._id === item._id ? { ...ci, quantity: ci.quantity + 1 } : ci
-        );
-      }
-      return [...prevCart, { ...item, quantity: 1 }];
-    });
-  };
+  useEffect(() => {
+    let isActive = true;
 
-  const updateQuantity = (itemId, newQty) => {
-    if (newQty <= 0) {
-      removeFromCart(itemId);
-      return;
-    }
-    setCart((prevCart) =>
-      prevCart.map((ci) => (ci._id === itemId ? { ...ci, quantity: newQty } : ci))
-    );
-  };
+    fetch('/data.json')
+      .then((response) => {
+        if (!response.ok) throw new Error(`Menu request failed: ${response.status}`);
+        return response.json();
+      })
+      .then((data) => {
+        if (isActive) {
+          setMenuItems(data);
+          setError('');
+        }
+      })
+      .catch((error) => {
+        console.error('Could not load menu data:', error);
+        if (isActive) setError('Could not load menu data. Check data.json and try again.');
+      })
+      .finally(() => {
+        if (isActive) setLoading(false);
+      });
 
-  const removeFromCart = (itemId) => {
-    setCart((prevCart) => prevCart.filter((ci) => ci._id !== itemId));
-  };
-
-  const clearCart = () => {
-    setCart([]);
-    localStorage.removeItem('cart');
-  };
-
-  // Auth Handlers
-  const handleLoginSuccess = (userData) => {
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
-    localStorage.setItem('token', userData.token);
-  };
+    return () => {
+      isActive = false;
+    };
+  }, [reloadCount]);
 
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem('user');
     localStorage.removeItem('token');
-    navigate('/');
   };
 
-  const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const visibleItems = menuItems.filter((item) =>
+    (category === 'All' || item.category === category) &&
+    (!vegetarianOnly || item.isVeg)
+  );
 
   return (
-    <div>
-      <Navbar cartCount={totalCartCount} user={user} onLogout={handleLogout} />
+    <>
+      <Navbar user={user} onLogout={handleLogout} />
+      <main className="container">
+        <h1>Explore Our Menu</h1>
+        <p style={{ color: '#718096', marginBottom: 20 }}>Browse dishes from QuickBite Cafe.</p>
 
-      <Routes>
-        <Route path="/" element={<MenuPage onAddToCart={addToCart} />} />
-        <Route
-          path="/cart"
-          element={
-            <CartPage
-              cart={cart}
-              updateQuantity={updateQuantity}
-              removeFromCart={removeFromCart}
-              clearCart={clearCart}
-              user={user}
+        <div className="filter-bar">
+          {categories.map((name) => (
+            <button
+              key={name}
+              className={`filter-btn ${category === name ? 'active' : ''}`}
+              onClick={() => setCategory(name)}
+            >
+              {name}
+            </button>
+          ))}
+          <label className="veg-toggle">
+            <input
+              type="checkbox"
+              checked={vegetarianOnly}
+              onChange={(event) => setVegetarianOnly(event.target.checked)}
             />
-          }
-        />
-        <Route
-          path="/orders"
-          element={
-            <ProtectedRoute user={user}>
-              <OrdersPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/login"
-          element={<LoginPage onLoginSuccess={handleLoginSuccess} />}
-        />
-        <Route
-          path="/register"
-          element={<RegisterPage onLoginSuccess={handleLoginSuccess} />}
-        />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute user={user} adminOnly={true}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </div>
+            Veg only
+          </label>
+        </div>
+
+        {loading ? (
+          <p>Loading menu...</p>
+        ) : error ? (
+          <div className="alert-box">
+            {error}{' '}
+            <button
+              className="btn-secondary"
+              onClick={() => {
+                setLoading(true);
+                setReloadCount((count) => count + 1);
+              }}
+            >
+              Try again
+            </button>
+          </div>
+        ) : (
+          <>
+            {visibleItems.length ? (
+              <div className="menu-grid">
+                {visibleItems.map((item) => <MenuCard key={item._id} item={item} />)}
+              </div>
+            ) : (
+              <p>No menu items match these filters.</p>
+            )}
+          </>
+        )}
+      </main>
+    </>
   );
 }
 

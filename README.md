@@ -1,6 +1,6 @@
-# Restaurant Menu & Table Order System
+# Restaurant Menu System
 
-A full-stack restaurant ordering application built with the MERN stack. It lets customers browse the menu, add items to a cart, place table orders, and track their status, while admins can manage menu items, view order analytics, and update order progress.
+A full-stack restaurant menu application built with the MERN stack. It lets customers browse the menu and admins manage menu items.
 
 This project is designed to be easy to understand and suitable for a college or portfolio demonstration.
 
@@ -11,24 +11,16 @@ The app is split into two main parts:
 - Backend: Node.js + Express + MongoDB + JWT authentication
 - Frontend: React + Vite + React Router
 
-Customers can place orders from a table-specific flow, and admins can manage the restaurant operations from a dashboard.
+Customers can browse the menu, and admins can manage menu items from the dashboard.
 
 ## Features
 
 ### Customer features
 - Browse menu items by category
 - Filter vegetarian-only dishes
-- Add, remove, and adjust cart quantities
-- Select a table number before checkout
-- Place an order with automatic subtotal, GST, and total calculation
-- Track order status: Placed, Preparing, Served, Paid
-- View past orders
 
 ### Admin features
 - Secure login with role-based access control
-- Dashboard with total orders and revenue summary
-- View all orders submitted by customers
-- Update order status through the workflow
 - Add, edit, and delete menu items using a shared form
 
 ### Security and authentication
@@ -139,17 +131,11 @@ The app includes preconfigured demo users for quick testing:
 
 ### Customer flow
 1. Sign in as a customer.
-2. Browse the menu and add food items to the cart.
-3. Choose a table number.
-4. Place the order.
-5. Check the status of the order from the order history page.
+2. Browse and filter menu items.
 
 ### Admin flow
 1. Sign in as admin.
-2. View the dashboard summary.
-3. Open the orders list.
-4. Update order status from one stage to the next.
-5. Manage menu items through the admin interface.
+2. Manage menu items through the admin interface.
 
 ## Key API endpoints
 
@@ -164,17 +150,8 @@ The app includes preconfigured demo users for quick testing:
 - `PUT /api/menu/:id`
 - `DELETE /api/menu/:id`
 
-### Orders
-- `POST /api/orders`
-- `GET /api/orders/myorders`
-- `GET /api/orders`
-- `GET /api/orders/stats`
-- `PUT /api/orders/:id/status`
-
 ## Notes
 
-- The total price is calculated on the backend to keep billing logic centralized.
-- The cart is managed in the frontend state and can be persisted in browser storage if needed.
 - The project is structured to be beginner-friendly and easy to extend for academic use.
 
 ## Future improvements
